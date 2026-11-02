@@ -29,6 +29,7 @@ comprar mejoras ← nutrientes llegan al núcleo ← transporte con pérdida
 - Cuadrícula de 31×31 casillas, generada con semilla (determinista, reproducible).
 - Tipos de casilla: **Suelo**, **Hojarasca** (materia que se agota rápido), **Madera muerta** (mucha materia, requiere mejora), **Roca** (infranqueable).
 - **Caída de hojas:** cada pocos segundos cae hojarasca en una casilla aleatoria. Cada cierto tiempo cae un tronco.
+- **Descomposición:** la hojarasca pierde materia sola con el tiempo, así que el mapa se estabiliza en torno a un 8% de casillas con hojas y hay que perseguirlas.
 
 ### Red
 - El **núcleo** está en el centro y digiere un poco de materia por sí solo.
@@ -55,6 +56,14 @@ comprar mejoras ← nutrientes llegan al núcleo ← transporte con pérdida
 - Cada espora sin gastar da +10% de rendimiento. Las esporas también se gastan en mejoras permanentes, así que **gastar o guardar** es una decisión.
 
 Todos los números de balance están en `src/sim/config.ts` y `src/sim/upgrades.ts`.
+
+## Experiencia del jugador
+
+- **Introducción** al empezar (y ayuda con `H` o el botón `?`): historia en un párrafo y 5 tarjetas (crece, absorbe, transporta, equilibra, renace).
+- **Guía de 8 objetivos** que se comprueban sobre el estado (nunca se atasca), con barra de progreso y resaltado del elemento a tocar. Se puede ocultar y reiniciar.
+- **El mapa explica las decisiones:** casillas disponibles marcadas, línea fantasma de la conexión, tooltip con eficiencia, aporte y mantenimiento estimados, y si la hifa compensa.
+- **Retroalimentación:** partículas de nutrientes viajando al núcleo, ondas al crecer, cruces al morir, textos flotantes con costes y motivos de error, aviso de red deficitaria y de hambre.
+- **Mejoras legibles:** barra de progreso hacia el precio, efecto actual → siguiente y brillo cuando se pueden comprar.
 
 ## Capas futuras (hoja de ruta)
 

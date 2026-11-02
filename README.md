@@ -12,7 +12,7 @@ npm run balance    # un bot juega 3 ciclos y muestra la evolución de la econom�
 npm run build      # build de producción en dist/
 ```
 
-En desarrollo, `?speed=40` en la URL acelera la simulación.
+En desarrollo, `?speed=40` en la URL acelera la simulación, y `window.__game` / `window.__fx` dan acceso al juego desde la consola.
 
 ## Estructura
 

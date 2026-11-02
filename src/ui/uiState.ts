@@ -4,8 +4,11 @@ export type Tool = "grow" | "cord";
 export interface UiState {
   tool: Tool;
   hover: number;
+  /** Última posición del puntero sobre el mapa, para refrescar el tooltip cada frame. */
+  pointerX: number;
+  pointerY: number;
 }
 
 export function createUiState(): UiState {
-  return { tool: "grow", hover: -1 };
+  return { tool: "grow", hover: -1, pointerX: 0, pointerY: 0 };
 }

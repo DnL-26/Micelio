@@ -40,6 +40,11 @@ export const CONFIG = {
 
   leafFallSeconds: 2,
   leafStock: [40, 120],
+  /**
+   * Materia/s que pierde la hojarasca sola al descomponerse. Sin esto el mapa se satura de hojas;
+   * con ~80 de materia por caída vive unos 160 s, así que hay unas 80 casillas con hojarasca a la vez.
+   */
+  litterDecay: 0.5,
   logFallSeconds: 150,
   logStock: [400, 900],
   logLength: [2, 4],

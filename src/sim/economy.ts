@@ -10,8 +10,8 @@ export interface TickResult {
   income: number;
   /** Nutrientes/s que cuesta mantener la red. */
   upkeep: number;
-  /** Hifas que murieron de hambre en este tick; si es > 0 hay que recalcular la red. */
-  died: number;
+  /** Casillas cuyas hifas murieron de hambre en este tick; si hay alguna hay que recalcular la red. */
+  deaths: number[];
 }
 
 /** Entropía actual: crece con lo producido en el ciclo, no con el tiempo. */
@@ -68,6 +68,15 @@ export function tick(s: GameState, mods: Modifiers, net: Network, dt: number): T
   s.timeRun += dt;
   s.timeAll += dt;
 
+  for (let i = 0; i < world.tiles.length; i++) {
+    if (world.tiles[i] !== TILE.Litter) continue;
+    world.stock[i] -= CONFIG.litterDecay * dt;
+    if (world.stock[i] <= 0) {
+      world.stock[i] = 0;
+      world.tiles[i] = TILE.Soil;
+    }
+  }
+
   s.leafTimer += dt;
   while (s.leafTimer >= CONFIG.leafFallSeconds) {
     s.leafTimer -= CONFIG.leafFallSeconds;
@@ -79,31 +88,33 @@ export function tick(s: GameState, mods: Modifiers, net: Network, dt: number): T
     placeLog(world, s.rng);
   }
 
-  let died = 0;
+  const deaths: number[] = [];
   if (s.nutrients.lt(0)) {
     s.nutrients = new Decimal(0);
     s.starveTimer += dt;
     while (s.starveTimer >= CONFIG.starveKillSeconds) {
       s.starveTimer -= CONFIG.starveKillSeconds;
-      if (killWeakestTip(s, net)) died++;
+      const killed = killWeakestTip(s, net);
+      if (killed >= 0) deaths.push(killed);
     }
   } else {
     s.starveTimer = 0;
   }
 
-  return { income: gain / dt, upkeep, died };
+  return { income: gain / dt, upkeep, deaths };
 }
 
 /**
- * Mata la hifa menos eficiente. Como la eficiencia decrece estrictamente a lo largo de cada camino,
- * la de menor eficiencia siempre es una punta: quitarla nunca desconecta el resto de la red.
+ * Mata la hifa menos eficiente y devuelve su casilla (-1 si no queda ninguna). Como la eficiencia
+ * decrece estrictamente a lo largo de cada camino, la de menor eficiencia siempre es una punta:
+ * quitarla nunca desconecta el resto de la red.
  * Se filtran las ya muertas porque la red no se recalcula hasta el final del tick.
  */
-function killWeakestTip(s: GameState, net: Network): boolean {
+function killWeakestTip(s: GameState, net: Network): number {
   const alive = net.hyphae.filter((i) => s.world.hypha[i] !== HYPHA.None);
-  if (alive.length === 0) return false;
+  if (alive.length === 0) return -1;
   let worst = alive[0];
   for (const i of alive) if (net.eff[i] < net.eff[worst]) worst = i;
   s.world.hypha[worst] = HYPHA.None;
-  return true;
+  return worst;
 }

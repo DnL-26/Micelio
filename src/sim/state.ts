@@ -5,7 +5,7 @@ import { getUpgrade } from "./upgrades";
 import { generateWorld } from "./world";
 import { nextRandom, randomSeed } from "../util/rng";
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 /** Lo que sobrevive a una esporulación. */
 export interface Legacy {
@@ -15,6 +15,8 @@ export interface Legacy {
   cycle: number;
   totalAll: Decimal;
   timeAll: number;
+  tutorial: number;
+  introSeen: boolean;
 }
 
 export function newGame(seed: number = randomSeed()): GameState {
@@ -25,6 +27,8 @@ export function newGame(seed: number = randomSeed()): GameState {
     cycle: 0,
     totalAll: new Decimal(0),
     timeAll: 0,
+    tutorial: 0,
+    introSeen: false,
   });
 }
 
@@ -49,6 +53,8 @@ export function newRun(legacy: Legacy): GameState {
     logTimer: 0,
     starveTimer: 0,
     lastSaved: Date.now(),
+    tutorial: legacy.tutorial,
+    introSeen: legacy.introSeen,
   };
 }
 
@@ -70,5 +76,7 @@ export function sporulate(s: GameState): GameState {
     cycle: s.cycle + 1,
     totalAll: s.totalAll,
     timeAll: s.timeAll,
+    tutorial: s.tutorial,
+    introSeen: s.introSeen,
   });
 }

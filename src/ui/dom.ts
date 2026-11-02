@@ -30,13 +30,32 @@ export interface ModalAction {
   onClick?: () => void;
 }
 
-/** Modal propio: Electron no soporta window.prompt, así que no lo usamos. */
-export function showModal(title: string, body: Child | Child[], actions: ModalAction[]): () => void {
+let closeCurrent: (() => void) | null = null;
+
+export function isModalOpen(): boolean {
+  return closeCurrent !== null;
+}
+
+/** Modal propio: Electron no soporta window.prompt, así que no lo usamos. Esc lo cierra. */
+export function showModal(
+  title: string,
+  body: Child | Child[],
+  actions: ModalAction[],
+  opts: { wide?: boolean } = {},
+): () => void {
+  closeCurrent?.();
   const root = byId("modal");
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key === "Escape") close();
+  };
   const close = () => {
     root.hidden = true;
     root.replaceChildren();
+    window.removeEventListener("keydown", onKey);
+    closeCurrent = null;
   };
+  closeCurrent = close;
+  window.addEventListener("keydown", onKey);
   const buttons = actions.map((a) =>
     h("button", {
       class: a.primary ? "primary" : "",
@@ -47,7 +66,7 @@ export function showModal(title: string, body: Child | Child[], actions: ModalAc
     }, a.label),
   );
   root.replaceChildren(
-    h("div", { class: "modal-card" },
+    h("div", { class: opts.wide ? "modal-card wide" : "modal-card" },
       h("h2", {}, title),
       h("div", { class: "modal-body" }, ...(Array.isArray(body) ? body : [body])),
       h("div", { class: "modal-actions" }, ...buttons),

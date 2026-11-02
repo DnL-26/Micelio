@@ -23,6 +23,9 @@ interface SaveFile {
   logTimer: number;
   starveTimer: number;
   lastSaved: number;
+  // v2
+  tutorial?: number;
+  introSeen?: boolean;
 }
 
 export function serialize(s: GameState): string {
@@ -46,6 +49,8 @@ export function serialize(s: GameState): string {
     logTimer: s.logTimer,
     starveTimer: s.starveTimer,
     lastSaved: s.lastSaved,
+    tutorial: s.tutorial,
+    introSeen: s.introSeen,
   };
   return JSON.stringify(file);
 }
@@ -60,7 +65,7 @@ export function deserialize(json: string): GameState {
   if (![f.tiles, f.stock, f.hypha].every((a) => Array.isArray(a) && a.length === n)) {
     throw new Error("El mundo del guardado está corrupto.");
   }
-  // Cuando haya v2, las migraciones van aquí: if (f.v < 2) { ... }
+  // v1 → v2: la guía y la introducción son nuevas; los campos ausentes toman su valor inicial.
   return {
     version: SAVE_VERSION,
     rng: { seed: f.rng },
@@ -83,6 +88,8 @@ export function deserialize(json: string): GameState {
     logTimer: f.logTimer ?? 0,
     starveTimer: f.starveTimer ?? 0,
     lastSaved: f.lastSaved ?? Date.now(),
+    tutorial: f.tutorial ?? 0,
+    introSeen: f.introSeen ?? false,
   };
 }
 

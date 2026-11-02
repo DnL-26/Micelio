@@ -101,6 +101,30 @@ describe("economía", () => {
     expect(w.hypha[c + 4]).toBe(HYPHA.Hypha);
   });
 
+  it("la vista previa coincide con la eficiencia real tras crecer", () => {
+    const g = new Game(newGame(8));
+    const c = coreIndex(g.state.world.size);
+    g.state.nutrients = new Decimal(1000);
+    g.state.totalRun = new Decimal(5000); // con algo de entropía
+    g.grow(c + 1);
+    const preview = g.growthPreview(c + 2);
+    expect(preview.via).toBe(c + 1);
+    g.grow(c + 2);
+    expect(g.efficiencyAt(c + 2)).toBeCloseTo(preview.eff);
+  });
+
+  it("emite eventos al crecer y explica por qué no se puede", () => {
+    const g = new Game(newGame(9));
+    const c = coreIndex(g.state.world.size);
+    g.state.nutrients = new Decimal(0);
+    g.grow(c + 1);
+    g.grow(c + 5, true);
+    const reasons = g.drainEvents().map((e) => (e.type === "denied" ? e.reason : e.type));
+    expect(reasons[0]).toMatch(/^Faltan/);
+    expect(reasons[1]).toBe("Tiene que tocar tu red");
+    expect(g.drainEvents()).toEqual([]);
+  });
+
   it("comprar una mejora descuenta su coste y sube el nivel", () => {
     const g = new Game(newGame(4));
     const exo = UPGRADES.find((u) => u.id === "exoenzymes")!;

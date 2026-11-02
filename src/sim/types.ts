@@ -37,4 +37,8 @@ export interface GameState {
   starveTimer: number;
   /** Epoch en ms del último guardado; sirve para calcular el progreso offline. */
   lastSaved: number;
+
+  /** Paso actual de la guía de objetivos; sobrevive a la esporulación. */
+  tutorial: number;
+  introSeen: boolean;
 }

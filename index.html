@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Micelio</title>
+  </head>
+  <body>
+    <div id="app">
+      <aside id="panel">
+        <header>
+          <h1>Micelio</h1>
+          <span id="cycle" class="muted"></span>
+        </header>
+        <section id="resources"></section>
+        <section>
+          <h2>Mejoras</h2>
+          <div id="upgrades" class="upgrade-list"></div>
+        </section>
+        <section id="prestige-section" hidden>
+          <h2>Esporulación</h2>
+          <div id="prestige"></div>
+          <div id="spore-upgrades" class="upgrade-list"></div>
+        </section>
+        <section id="settings"></section>
+      </aside>
+      <main id="stage">
+        <div id="toolbar"></div>
+        <div id="viewport"><canvas id="world"></canvas></div>
+        <div id="log"></div>
+      </main>
+    </div>
+    <div id="tooltip" hidden></div>
+    <div id="modal" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
